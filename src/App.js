@@ -66,8 +66,10 @@ class App extends react.Component{
     firebase
       .firestore()
       .collection('products')
-      .get()
-      .then((snapshot) => {
+      //using listener
+      // .get()
+      // .then((snapshot) => {
+      .onSnapshot((snapshot) => {
       console.log(snapshot);
 
       snapshot.docs.map((doc) => {
