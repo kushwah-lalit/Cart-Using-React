@@ -60,11 +60,13 @@ class App extends react.Component{
         products: [],
         loading: true
     }  // this.testing();
+    this.db = firebase.firestore();
   }
 
   componentDidMount () {
-    firebase
-      .firestore()
+    // firebase
+    //   .firestore()
+    this.db
       .collection('products')
       //using listener
       // .get()
@@ -150,11 +152,32 @@ class App extends react.Component{
 
     return cartTotal;
   }
+  addProduct = () => {
+    this.db
+      .collection("products")
+      .add({
+        img: "",
+        price: 900,
+        qty: 3,
+        title: "Washing Machine"
+      })
+      .then(docRef => {
+        docRef.get().then(snapshot => {
+          console.log("Product has been added", snapshot.data());
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
   render () {
     const { products, loading } = this.state;
   return (
     <div className="App">
     <Navbar count={this.getCartCount()} />
+    <button onClick={this.addProduct} style={{ padding: 20, fontSize: 20 }}>
+          Add a Product
+    </button>
     <Cart
       products={products}
       onIncreaseQuantity={this.handleIncreaseQuantity}
