@@ -97,35 +97,67 @@ class App extends react.Component{
     const { products } = this.state;
     const index = products.indexOf(product);
 
-    products[index].qty += 1;
+    // products[index].qty += 1;
 
-    this.setState({
-      products
-    })
+    // this.setState({
+    //   products
+    // })
+    //snapshot in didmount updates the page on change in database...so what we will do is directly update the db data so corresponding changes reflect both place
+    const docRef = this.db.collection("products").doc(products[index].id);
+
+    docRef
+      .update({ qty: products[index].qty + 1 })
+      .then(() => {
+        console.log("Document updated sucessfully");
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
-  handleDecreaseQuantity = (product) => {
-    console.log('Heyy please dec the qty of ', product);
+  handleDecreaseQuantity = product => {
     const { products } = this.state;
     const index = products.indexOf(product);
-    if(products[index].qty === 0){
-        return;
+
+    if (products[index].qty === 0) {
+      return;
     }
+    // products[index].qty -= 1;
 
-    products[index].qty -= 1;
+    // this.setState({
+    //   products
+    // });
+    const docRef = this.db.collection("products").doc(products[index].id);
 
-    this.setState({
-      products
-    })
-  }
-  handleDeleteProduct = (id) => {
-    const { products } = this.state;
+    docRef
+      .update({ qty: products[index].qty - 1 })
+      .then(() => {
+        console.log("Document updated sucessfully");
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
-    const items = products.filter((item) => item.id !== id); // [{}]
+  handleDeleteProduct = id => {
+    // const { products } = this.state;
 
-    this.setState({
-      products: items
-    })
-  }
+    const docRef = this.db.collection("products").doc(id);
+
+    docRef
+      .delete()
+      .then(() => {
+        console.log("Deleted sucessfully");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    // const items = products.filter(product => product.id !== id);
+
+    // this.setState({
+    //   products: items
+    // });
+  };
   getCartCount = () => {
     const { products } = this.state;
 
@@ -152,32 +184,32 @@ class App extends react.Component{
 
     return cartTotal;
   }
-  addProduct = () => {
-    this.db
-      .collection("products")
-      .add({
-        img: "",
-        price: 900,
-        qty: 3,
-        title: "Washing Machine"
-      })
-      .then(docRef => {
-        docRef.get().then(snapshot => {
-          console.log("Product has been added", snapshot.data());
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
+  // addProduct = () => {
+  //   this.db
+  //     .collection("products")
+  //     .add({
+  //       img: "",
+  //       price: 900,
+  //       qty: 3,
+  //       title: "Washing Machine"
+  //     })
+  //     .then(docRef => {
+  //       docRef.get().then(snapshot => {
+  //         console.log("Product has been added", snapshot.data());
+  //       });
+  //     })
+  //     .catch(error => {
+  //       console.log(error);
+  //     });
+  // };
   render () {
     const { products, loading } = this.state;
   return (
     <div className="App">
     <Navbar count={this.getCartCount()} />
-    <button onClick={this.addProduct} style={{ padding: 20, fontSize: 20 }}>
+    {/* <button onClick={this.addProduct} style={{ padding: 20, fontSize: 20 }}>
           Add a Product
-    </button>
+    </button> */}
     <Cart
       products={products}
       onIncreaseQuantity={this.handleIncreaseQuantity}
