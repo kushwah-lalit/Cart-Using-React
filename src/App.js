@@ -71,6 +71,10 @@ class App extends react.Component{
       //using listener
       // .get()
       // .then((snapshot) => {
+        // queries :::::
+      // .where("price", "==", 999)
+      // .where("title", "==", "Mug")
+      .orderBy("price", "desc")
       .onSnapshot((snapshot) => {
       console.log(snapshot);
 
